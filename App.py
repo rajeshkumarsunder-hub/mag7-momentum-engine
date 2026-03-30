@@ -258,7 +258,7 @@ if run_pressed:
 
     results_df = pd.DataFrame(history).set_index('Date')
     final_principal = results_df['Total_Principal'].iloc[-1]
-# --- SILENT SHEET LOGGER ---
+# ---  SHEET LOGGER ---
     try:
         # Pull the locked keys from Streamlit Secrets
         credentials_dict = json.loads(st.secrets["google_credentials"])
@@ -317,12 +317,17 @@ if run_pressed:
         ("Total Cash Invested", results_df['Total_Principal'], None)
     ]
 
-    for i, (name, series, dd_series) in enumerate(metrics):
+for i, (name, series, dd_series) in enumerate(metrics):
         with cols[i]:
             st.metric(label=name, value=f"${series.iloc[-1]:,.0f}")
             if dd_series is not None:
-                st.caption(f"CAGR: **{calc_cagr(series):.1f}%** |  Max DD: **{dd_series.min()*100:.1f}%**")
-                st.caption(f"Calmar Ratio: **{calc_calmar(series, dd_series):.2f}**")
+                # Only show CAGR and Calmar if it's a pure lump sum backtest
+                if monthly_sip == 0:
+                    st.caption(f"CAGR: **{calc_cagr(series):.1f}%** |  Max DD: **{dd_series.min()*100:.1f}%**")
+                    st.caption(f"Calmar Ratio: **{calc_calmar(series, dd_series):.2f}**")
+                else:
+                    st.caption(f"Max DD: **{dd_series.min()*100:.1f}%**")
+                    st.caption("*(CAGR invalid with active SIP)*")
 
     st.markdown("### Equity Curve & Drawdowns")
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8), gridspec_kw={'height_ratios': [3, 1]}, sharex=True)
