@@ -81,7 +81,7 @@ if run_pressed:
         gc = gspread.service_account_from_dict(credentials_dict)
         
         # Connect to your exact spreadsheet
-        sheet = gc.open("Mag7_Logs").sheet1
+        sheet = gc.open("Mag7_TrafficLogger").sheet1
         
         # Log the data row
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
