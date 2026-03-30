@@ -21,6 +21,16 @@ st.sidebar.markdown("---")
 st.sidebar.header("Engine Settings (Locked)")
 st.sidebar.text("Execution Day: 28th\nRegime Filter: 200D SMA (97% Buffer)\nMomentum Hurdle: +1.25%\nLookback: 63 Days")
 
+with open("Mag7_Strategy.pdf", "rb") as pdf_file:
+    PDFbyte = pdf_file.read()
+
+st.sidebar.download_button(
+    label="📄 Download Strategy Playbook",
+    data=PDFbyte,
+    file_name="Mag7_Strategy_HowTo.pdf",
+    mime="application/pdf"
+)
+
 st.sidebar.markdown("---")
 st.sidebar.caption("👨‍💻 Developed by Rajesh")
 
