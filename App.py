@@ -99,7 +99,9 @@ if run_pressed:
     total_invested_principal = starting_lump_sum
     history = []
     trade_log = []
-
+    # --- NEW: Master Ledger for XIRR (Inflows are negative) ---
+    base_cash_flows = [(pd.to_datetime(user_start_date), -float(starting_lump_sum))]
+    
     sim_start_mask = data.index >= pd.to_datetime(user_start_date)
     if not sim_start_mask.any():
         st.error("Start date is out of range.")
@@ -142,6 +144,9 @@ if run_pressed:
         if date.day >= EXECUTION_DAY and date.month != current_month:
             is_execution_day = True
             current_month = date.month
+            # --- NEW: Record the exact date of the SIP deposit ---
+            if monthly_sip > 0:
+                base_cash_flows.append((date, -float(monthly_sip)))
             total_invested_principal += monthly_sip
             qqq_shares += monthly_sip / float(row[benchmark])
             spy_shares += monthly_sip / float(row[broad_market])
@@ -304,8 +309,28 @@ if run_pressed:
         results_df[f'{col}_DD'] = get_drawdown(results_df[f'{col}_Value' if col == 'Strategy' else f'{col}_Hold'])
 
     years = (results_df.index[-1] - results_df.index[0]).days / 365.25
-    def calc_cagr(series): return ((series.iloc[-1] / series.iloc[0]) ** (1 / years) - 1) * 100
-    def calc_calmar(series, dd_series): return calc_cagr(series) / abs(dd_series.min() * 100) if abs(dd_series.min()) > 0 else 0
+    # --- TRUE XIRR CALCULATION (Bisection Method) ---
+    def calc_xirr(final_value, base_cfs):
+        final_date = results_df.index[-1]
+        # Append the final portfolio value as a positive withdrawal
+        cfs = base_cfs + [(final_date, float(final_value))]
+        t0 = cfs[0][0]
+        
+        def xnpv(rate):
+            if rate <= -1.0: return float('inf')
+            return sum([cf / (1.0 + rate)**((d - t0).days / 365.25) for d, cf in cfs])
+        
+        # Bisection solver to find the rate where NPV equals 0
+        low, high = -0.99, 100.0  # Range: -99% to +10,000%
+        for _ in range(100):
+            mid = (low + high) / 2.0
+            val = xnpv(mid)
+            if abs(val) < 0.01: break
+            if val > 0:
+                low = mid  # Rate is too low
+            else:
+                high = mid # Rate is too high
+        return mid * 100
 
     st.markdown("### Performance Metrics")
     cols = st.columns(4)
@@ -319,15 +344,16 @@ if run_pressed:
 
     for i, (name, series, dd_series) in enumerate(metrics):
         with cols[i]:
-            st.metric(label=name, value=f"${series.iloc[-1]:,.0f}")
+            final_val = series.iloc[-1]
+            st.metric(label=name, value=f"${final_val:,.0f}")
             if dd_series is not None:
-                # Only show CAGR and Calmar if it's a pure lump sum backtest
-                if monthly_sip == 0:
-                    st.caption(f"CAGR: **{calc_cagr(series):.1f}%** |  Max DD: **{dd_series.min()*100:.1f}%**")
-                    st.caption(f"Calmar Ratio: **{calc_calmar(series, dd_series):.2f}**")
-                else:
-                    st.caption(f"Max DD: **{dd_series.min()*100:.1f}%**")
-                    st.caption("*(CAGR invalid with active SIP)*")
+                # Calculate the true XIRR dynamically for this specific strategy
+                xirr_pct = calc_xirr(final_val, base_cash_flows)
+                st.caption(f"XIRR: **{xirr_pct:.1f}%** |  Max DD: **{dd_series.min()*100:.1f}%**")
+                
+                # Calmar Ratio adapted to use XIRR instead of standard CAGR
+                calmar = (xirr_pct / 100) / abs(dd_series.min()) if abs(dd_series.min()) > 0 else 0
+                st.caption(f"Calmar Ratio: **{calmar:.2f}**")
 
     st.markdown("### Equity Curve & Drawdowns")
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8), gridspec_kw={'height_ratios': [3, 1]}, sharex=True)
