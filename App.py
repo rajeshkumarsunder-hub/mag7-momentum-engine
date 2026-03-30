@@ -14,7 +14,7 @@ st.sidebar.header("Simulation Parameters")
 # start_year = st.sidebar.selectbox("Start Year", [str(y) for y in range(2010, 2025)], index=2)
 start_year = str(st.sidebar.number_input("Start Year", min_value=1990, max_value=2026, value=2012, step=1))
 start_month = st.sidebar.selectbox("Start Month", [f"{m:02d}" for m in range(1, 13)], index=0)
-starting_lump_sum = st.sidebar.number_input("Starting Lump Sum ($)", min_value=0, value=0, step=1000)
+starting_lump_sum = st.sidebar.number_input("Starting Lump Sum ($)", min_value=1, value=1, step=1000)
 monthly_sip = st.sidebar.number_input("Monthly SIP ($)", min_value=0, value=100, step=100)
 
 st.sidebar.markdown("---")
