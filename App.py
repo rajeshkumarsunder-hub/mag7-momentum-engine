@@ -317,7 +317,7 @@ if run_pressed:
         ("Total Cash Invested", results_df['Total_Principal'], None)
     ]
 
-for i, (name, series, dd_series) in enumerate(metrics):
+    for i, (name, series, dd_series) in enumerate(metrics):
         with cols[i]:
             st.metric(label=name, value=f"${series.iloc[-1]:,.0f}")
             if dd_series is not None:
