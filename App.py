@@ -294,7 +294,7 @@ if run_pressed:
         if "200" in str(e):
             pass 
         else:
-            pass # Silent failure in production
+            st.error(f"Logger Error: {e}") # Let's see the error!
     # ---------------------------
     
     
