@@ -21,12 +21,12 @@ st.sidebar.markdown("---")
 st.sidebar.header("Engine Settings (Locked)")
 st.sidebar.text("Execution Day: 28th\nRegime Filter: 200D SMA (97% Buffer)\nMomentum Hurdle: +1.25%\nLookback: 63 Days")
 
-with open("Mag7_Strategy.pdf", "rb") as pdf_file:
+with open("Mag7_Strategy_HowTo.pdf", "rb") as pdf_file:
     PDFbyte = pdf_file.read()
 
 import os
 
-pdf_path = "Mag7_Strategy.pdf"
+pdf_path = "Mag7_Strategy_HowTo.pdf"
 
 if os.path.exists(pdf_path):
     with open(pdf_path, "rb") as pdf_file:
@@ -35,7 +35,7 @@ if os.path.exists(pdf_path):
     st.sidebar.download_button(
         label="📄 Download Strategy Playbook",
         data=PDFbyte,
-        file_name="Mag7_Strategy_Playbook.pdf",
+        file_name="Mag7_Strategy_HowTo.pdf",
         mime="application/pdf"
     )
 else:
