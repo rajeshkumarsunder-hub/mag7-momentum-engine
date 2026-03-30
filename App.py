@@ -44,7 +44,7 @@ else:
 st.sidebar.markdown("---")
 st.sidebar.caption("👨‍💻 Developed by Rajesh")
 
-EXECUTION_DAY = 28
+EXECUTION_DAY = 5
 REGIME_BUFFER = 0.97
 MIN_ABS_MOMENTUM = 0.0125
 ANNUAL_RISK_FREE = 0.0
