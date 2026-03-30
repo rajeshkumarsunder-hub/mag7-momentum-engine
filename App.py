@@ -19,7 +19,8 @@ monthly_sip = st.sidebar.number_input("Monthly SIP ($)", min_value=0, value=100,
 
 st.sidebar.markdown("---")
 st.sidebar.header("Engine Settings (Locked)")
-st.sidebar.text("Execution Day: 05th\nRegime Filter: 200D SMA (97% Buffer)\nMomentum Hurdle: +1.25%\nLookback: 63 Days")
+st.sidebar.text("Execution Day: 05th\nRegime Filter: 200D SMA (97% Buffer)\nMomentum Hurdle: +1.25%\nLookback: 63 Days\n")
+st.sidebar.text("tickers = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'TSLA', 'NVDA']")
 
 with open("Mag7_Strategy_HowTo.pdf", "rb") as pdf_file:
     PDFbyte = pdf_file.read()
