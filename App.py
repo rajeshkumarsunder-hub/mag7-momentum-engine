@@ -74,6 +74,23 @@ def load_data(start, end):
     return data
 
 if run_pressed:
+# --- SILENT SHEET LOGGER ---
+    try:
+        # Pull the locked keys from Streamlit Secrets
+        credentials_dict = json.loads(st.secrets["google_credentials"])
+        gc = gspread.service_account_from_dict(credentials_dict)
+        
+        # Connect to your exact spreadsheet
+        sheet = gc.open("Mag7_Logs").sheet1
+        
+        # Log the data row
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        sheet.append_row([timestamp, start_year, starting_lump_sum, monthly_sip])
+    except Exception as e:
+        # If the logger fails (e.g., Google is down), fail silently so the user's dashboard doesn't crash
+        pass
+    # ---------------------------
+    
     data = load_data(fetch_start_date, end_date)
     exec_prices_df = data[tickers].shift(-1)
 
