@@ -21,6 +21,9 @@ st.sidebar.markdown("---")
 st.sidebar.header("Engine Settings (Locked)")
 st.sidebar.text("Execution Day: 28th\nRegime Filter: 200D SMA (97% Buffer)\nMomentum Hurdle: +1.25%\nLookback: 63 Days")
 
+st.sidebar.markdown("---")
+st.sidebar.caption("👨‍💻 Developed by Rajesh")
+
 EXECUTION_DAY = 28
 REGIME_BUFFER = 0.97
 MIN_ABS_MOMENTUM = 0.0125
