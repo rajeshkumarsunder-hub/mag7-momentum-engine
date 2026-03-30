@@ -267,11 +267,12 @@ if run_pressed:
         # Connect to your spreadsheet
         sheet = gc.open("Mag7_TrafficLogger").sheet1
         
-        # Extract the final values directly from your dataframe
-        final_strategy = round(results_df['Strategy_Value'].iloc[-1], 2)
-        final_mag7 = round(results_df['Mag7_Hold'].iloc[-1], 2)
-        final_qqq = round(results_df['QQQ_Hold'].iloc[-1], 2)
-        final_spy = round(results_df['SPY_Hold'].iloc[-1], 2)
+        # Extract the final values and force them into standard Python floats
+        final_principal = float(results_df['Total_Principal'].iloc[-1])
+        final_strategy = float(round(results_df['Strategy_Value'].iloc[-1], 2))
+        final_mag7 = float(round(results_df['Mag7_Hold'].iloc[-1], 2))
+        final_qqq = float(round(results_df['QQQ_Hold'].iloc[-1], 2))
+        final_spy = float(round(results_df['SPY_Hold'].iloc[-1], 2))
 
         # Log the 9-item data row
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
