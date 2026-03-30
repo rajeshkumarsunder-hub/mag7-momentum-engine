@@ -79,22 +79,7 @@ def load_data(start, end):
     return data
 
 if run_pressed:
-# --- SILENT SHEET LOGGER ---
-    try:
-        # Pull the locked keys from Streamlit Secrets
-        credentials_dict = json.loads(st.secrets["google_credentials"])
-        gc = gspread.service_account_from_dict(credentials_dict)
-        
-        # Connect to your exact spreadsheet
-        sheet = gc.open("Mag7_TrafficLogger").sheet1
-        
-        # Log the data row
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        sheet.append_row([timestamp, start_year, starting_lump_sum, monthly_sip])
-    except Exception as e:
-        st.error(f"Logger Error: {e}")
-    # ---------------------------
-    
+  
     data = load_data(fetch_start_date, end_date)
     exec_prices_df = data[tickers].shift(-1)
 
@@ -273,7 +258,46 @@ if run_pressed:
 
     results_df = pd.DataFrame(history).set_index('Date')
     final_principal = results_df['Total_Principal'].iloc[-1]
+# --- SILENT SHEET LOGGER ---
+    try:
+        # Pull the locked keys from Streamlit Secrets
+        credentials_dict = json.loads(st.secrets["google_credentials"])
+        gc = gspread.service_account_from_dict(credentials_dict)
+        
+        # Connect to your spreadsheet
+        sheet = gc.open("Mag7_TrafficLogger").sheet1
+        
+        # Extract the final values directly from your dataframe
+        final_strategy = round(results_df['Strategy_Value'].iloc[-1], 2)
+        final_mag7 = round(results_df['Mag7_Hold'].iloc[-1], 2)
+        final_qqq = round(results_df['QQQ_Hold'].iloc[-1], 2)
+        final_spy = round(results_df['SPY_Hold'].iloc[-1], 2)
 
+        # Log the 9-item data row
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
+        payload = [
+            timestamp, 
+            start_year, 
+            starting_lump_sum, 
+            monthly_sip, 
+            final_principal, 
+            final_strategy, 
+            final_mag7, 
+            final_qqq, 
+            final_spy
+        ]
+        
+        sheet.append_row(payload)
+        
+    except Exception as e:
+        if "200" in str(e):
+            pass 
+        else:
+            pass # Silent failure in production
+    # ---------------------------
+    
+    
     def get_drawdown(series): return (series - series.cummax()) / series.cummax()
     for col in ['Strategy', 'Mag7', 'QQQ', 'SPY']:
         results_df[f'{col}_DD'] = get_drawdown(results_df[f'{col}_Value' if col == 'Strategy' else f'{col}_Hold'])
