@@ -12,6 +12,8 @@ st.title("Mag 7 Quantitative Momentum Engine (V4.4)")
 
 # Put the button first so it renders at the top
 run_pressed = st.sidebar.button("Run Simulation", type="primary", use_container_width=True)
+st.sidebar.markdown("---")
+st.sidebar.caption("👨‍💻 Developed by Rajesh")
 
 # Then render all your inputs below it
 st.sidebar.header("Simulation Parameters")
@@ -20,11 +22,6 @@ start_year = str(st.sidebar.number_input("Start Year", min_value=1990, max_value
 start_month = st.sidebar.selectbox("Start Month", [f"{m:02d}" for m in range(1, 13)], index=0)
 starting_lump_sum = st.sidebar.number_input("Starting Lump Sum ($)", min_value=1, value=1, step=1000)
 monthly_sip = st.sidebar.number_input("Monthly SIP ($)", min_value=0, value=100, step=100)
-
-st.sidebar.markdown("---")
-st.sidebar.header("Engine Settings (Locked)")
-st.sidebar.text("Execution Day: 05th\nRegime Filter: 200D SMA (97% Buffer)\nMomentum Hurdle: +1.25%\nLookback: 63 Days\n")
-st.sidebar.text("tickers = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'TSLA', 'NVDA']")
 
 with open("Mag7_Strategy_HowTo.pdf", "rb") as pdf_file:
     PDFbyte = pdf_file.read()
@@ -46,8 +43,13 @@ if os.path.exists(pdf_path):
 else:
     st.sidebar.warning("⚠️ Strategy PDF is currently unavailable.")
 
+
 st.sidebar.markdown("---")
-st.sidebar.caption("👨‍💻 Developed by Rajesh")
+st.sidebar.header("Engine Settings (Locked)")
+st.sidebar.text("Execution Day: 05th\nRegime Filter: 200D SMA (97% Buffer)\nMomentum Hurdle: +1.25%\nLookback: 63 Days\n")
+st.sidebar.text("tickers = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'TSLA', 'NVDA']")
+
+
 
 EXECUTION_DAY = 5
 REGIME_BUFFER = 0.97
