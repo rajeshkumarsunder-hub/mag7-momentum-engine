@@ -10,6 +10,10 @@ warnings.filterwarnings('ignore')
 st.set_page_config(page_title="Mag 7 Momentum Engine", layout="wide")
 st.title("Mag 7 Quantitative Momentum Engine (V4.4)")
 
+# Put the button first so it renders at the top
+run_pressed = st.sidebar.button("Run Simulation", type="primary", use_container_width=True)
+
+# Then render all your inputs below it
 st.sidebar.header("Simulation Parameters")
 # start_year = st.sidebar.selectbox("Start Year", [str(y) for y in range(2010, 2025)], index=2)
 start_year = str(st.sidebar.number_input("Start Year", min_value=1990, max_value=2026, value=2012, step=1))
@@ -67,7 +71,7 @@ def load_data(start, end):
     data[broad_market] = data[broad_market].bfill()
     return data
 
-if st.sidebar.button("Run Simulation", type="primary"):
+if run_pressed:
     data = load_data(fetch_start_date, end_date)
     exec_prices_df = data[tickers].shift(-1)
 
