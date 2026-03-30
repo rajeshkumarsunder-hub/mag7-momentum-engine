@@ -24,12 +24,22 @@ st.sidebar.text("Execution Day: 28th\nRegime Filter: 200D SMA (97% Buffer)\nMome
 with open("Mag7_Strategy.pdf", "rb") as pdf_file:
     PDFbyte = pdf_file.read()
 
-st.sidebar.download_button(
-    label="📄 Download Strategy Playbook",
-    data=PDFbyte,
-    file_name="Mag7_Strategy_HowTo.pdf",
-    mime="application/pdf"
-)
+import os
+
+pdf_path = "Mag7_Strategy.pdf"
+
+if os.path.exists(pdf_path):
+    with open(pdf_path, "rb") as pdf_file:
+        PDFbyte = pdf_file.read()
+
+    st.sidebar.download_button(
+        label="📄 Download Strategy Playbook",
+        data=PDFbyte,
+        file_name="Mag7_Strategy_Playbook.pdf",
+        mime="application/pdf"
+    )
+else:
+    st.sidebar.warning("⚠️ Strategy PDF is currently unavailable.")
 
 st.sidebar.markdown("---")
 st.sidebar.caption("👨‍💻 Developed by Rajesh")
