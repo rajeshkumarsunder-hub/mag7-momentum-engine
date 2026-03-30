@@ -87,8 +87,7 @@ if run_pressed:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         sheet.append_row([timestamp, start_year, starting_lump_sum, monthly_sip])
     except Exception as e:
-        # If the logger fails (e.g., Google is down), fail silently so the user's dashboard doesn't crash
-        pass
+        st.error(f"Logger Error: {e}")
     # ---------------------------
     
     data = load_data(fetch_start_date, end_date)
