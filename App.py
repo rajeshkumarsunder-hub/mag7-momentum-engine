@@ -65,7 +65,8 @@ MOMENTUM_WINDOW = 63
 tickers = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'TSLA', 'NVDA']
 benchmark = 'QQQ'
 broad_market = 'SPY'
-end_date = '2026-03-28'
+# end_date = '2026-03-28'
+end_date = pd.Timestamp.today().strftime('%Y-%m-%d')
 
 user_start_date = f"{start_year}-{start_month}-01"
 fetch_start_date = (pd.to_datetime(user_start_date) - pd.DateOffset(years=1)).strftime('%Y-%m-%d')
